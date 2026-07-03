@@ -1,0 +1,161 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+
+    margin: 0;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    background: #111;
+
+    color: white;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    min-height: 100vh;
+
+    padding: 20px;
+}
+
+.container {
+
+    width: 100%;
+
+    max-width: 420px;
+
+    background: #222;
+
+    border-radius: 16px;
+
+    padding: 24px;
+
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+
+}
+
+h1 {
+
+    text-align: center;
+
+    margin-top: 0;
+
+}
+
+.control {
+
+    margin-bottom: 24px;
+
+}
+
+label {
+
+    display: block;
+
+    text-align: center;
+
+    margin-bottom: 8px;
+
+    font-weight: bold;
+
+}
+
+input[type=number],
+input[type=text] {
+
+    text-align: center;
+
+    width: 100%;
+
+    font-size: 16px;
+
+    padding: 10px;
+
+}
+
+input[type=range] {
+
+    width: 100%;
+
+}
+
+.output {
+
+    text-align: center;
+
+    font-size: 22px;
+
+    margin-bottom: 24px;
+
+}
+
+.output span {
+
+    display: block;
+
+    margin-top: 10px;
+
+    font-size: 34px;
+
+    font-weight: bold;
+
+    color: #4fd2ff;
+
+}
+
+.buttons {
+
+    display: flex;
+
+    gap: 16px;
+
+}
+
+button {
+
+    flex: 1;
+
+    font-size: 20px;
+
+    padding: 8px;
+
+    cursor: pointer;
+
+}
+
+.spinner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.spinner input {
+    flex: 1;
+    text-align: center;
+}
+
+.spinner button {
+    width: 50px;
+    height: 42px;
+    flex-shrink: 0;
+    user-select: none;
+    touch-action: manipulation;
+}
+
+/* Chrome, Edge, Safari */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
