@@ -131,7 +131,20 @@ function setupSpinner(button, input, direction, afterChange = updateDisplay) {
 }
 
 function getFrequency() {
-    return Number(fundamentalInput.value) * Number(multiplierInput.value);
+    const fundamental = Number(fundamentalInput.value);
+    const multiplier = Number(multiplierInput.value);
+
+    if (!Number.isFinite(multiplier)) return 0;
+
+    if (multiplier > 0) {
+        return fundamental * multiplier;
+    }
+
+    if (multiplier < 0) {
+        return fundamental / Math.abs(multiplier);
+    }
+
+    return fundamental; // multiplier is 0
 }
 
 function frequencyToMidi(freq, referenceA) {
@@ -170,7 +183,7 @@ function updateDisplay() {
     const sign = nearest.cents >= 0 ? "+" : "";
 
     nearestNote.textContent =
-        `${nearest.note} (${sign}${nearest.cents.toFixed(1)}¢)`;  
+        `${nearest.note} (${sign}${nearest.cents.toFixed(2)}¢)`;  
 
     outputDisplay.textContent = freq.toFixed(2) + " Hz" ;  
 
@@ -245,7 +258,10 @@ function updateFromNote() {
 
     const freq = midiToFrequency(midi, refA);
 
-    fundamentalInput.value = freq.toFixed(2);
+    const roundedFreq = Number(freq.toFixed(3));
+    fundamentalInput.value = roundedFreq.toFixed(3);
+
+    //fundamentalInput.value = freq.toFixed(2);
 
     updateDisplay();
 
@@ -283,8 +299,6 @@ function changeValue(input, amount) {
     value = Math.max(min, value);
 
     input.value = formatValue(input, value);
-
-    //updateDisplay();
 
 }
 
