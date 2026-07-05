@@ -78,6 +78,48 @@ input[type=text] {
 
 }
 
+.dual-control-row {
+    display: flex;
+    gap: 16px;
+}
+
+.dual-control {
+    flex: 1;
+}
+
+.dual-control input {
+    width: 100%;
+}
+
+.transpose-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    align-items: center;
+}
+
+.transpose-controls button {
+    width: 100%;
+    padding: 8px 4px;
+    border: none;
+    border-radius: 8px;
+    background: #4fd2ff;
+    color: #111;
+    font-weight: bold;
+    font-size: 9px;
+}
+
+.transpose-controls button.active {
+    background: #a2211d;
+    color: white;
+}
+
+.transpose-controls input {
+    width: 100%;
+}
+
+
+
 input[type=range] {
 
     width: 100%;
