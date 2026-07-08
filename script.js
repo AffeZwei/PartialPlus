@@ -71,7 +71,7 @@ let oscillator = null;
 let gainNode = null;
 let holdTimeout;
 let holdInterval;
-let transposeEnabled = true;
+let transposeEnabled = false;
 
 function getVolume() {
     return Math.pow(Number(volumeSlider.value) / 100, 2);
@@ -283,9 +283,12 @@ function updateFromNote() {
         return;
 
     const freq = midiToFrequency(midi, refA);
+    /*
+    const roundedFreq = Number(freq.toFixed(3));  
+    fundamentalInput.value = roundedFreq.toFixed(3);  
+    */
 
-    const roundedFreq = Number(freq.toFixed(3));
-    fundamentalInput.value = roundedFreq.toFixed(3);
+    fundamentalInput.value = Number(freq.toPrecision(8));
 
     //fundamentalInput.value = freq.toFixed(2);
 
@@ -328,12 +331,16 @@ function changeValue(input, amount) {
 
 }
 
-function startTone() {
+async function startTone() {
 
     if (oscillator) return;
 
     if (!audioContext) {
         audioContext = new AudioContext();
+    }
+
+    if (audioContext.state === "suspended"); {
+        await audioContext.resume();
     }
 
     oscillator = audioContext.createOscillator();
@@ -371,10 +378,10 @@ function stopTone() {
 
     gainNode.gain.linearRampToValueAtTime(
         0,
-        audioContext.currentTime + 0.22
+        audioContext.currentTime + 0.2
     );
 
-    oscillator.stop(audioContext.currentTime + 0.22);
+    oscillator.stop(audioContext.currentTime + 0.2);
 
     oscillator.onended = () => {
         oscillator.disconnect();
