@@ -3,6 +3,8 @@ const multiplierInput = document.getElementById("multiplier");
 const volumeSlider = document.getElementById("volume");
 
 const noteInput = document.getElementById("note");
+const transposeNote = document.getElementById("transpose");
+const transposeToggleButton = document.getElementById("transposeToggle");
 const referenceAInput = document.getElementById("referenceA");
 
 const outputDisplay = document.getElementById("outputFrequency");
@@ -69,6 +71,7 @@ let oscillator = null;
 let gainNode = null;
 let holdTimeout;
 let holdInterval;
+let transposeEnabled = true;
 
 function getVolume() {
     return Math.pow(Number(volumeSlider.value) / 100, 2);
@@ -153,45 +156,65 @@ function frequencyToMidi(freq, referenceA) {
 
 }
 
+function updateTransposeToggle() {
+    const label = transposeEnabled ? "On" : "Off";
+    transposeToggleButton.textContent = `Transpose: ${label}`;
+    transposeToggleButton.classList.toggle("active", transposeEnabled);
+}
+
+function toggleTranspose() {
+    transposeEnabled = !transposeEnabled;
+    updateTransposeToggle();
+    updateDisplay();
+}
+
 function frequencyToNote(freq, referenceA) {
-
     const midiFloat = frequencyToMidi(freq, referenceA);
-
     const midi = Math.round(midiFloat);
-
     const cents = (midiFloat - midi) * 100;
+    //const octave = Math.floor(midi / 12) - 1;
+    let octave = Math.floor(midi / 12) - 1;
+    let noteIndex = midi % 12;
+    let note = NOTE_NAMES[noteIndex];
 
-    const octave = Math.floor(midi / 12) - 1;
+if (transposeEnabled) {
+    const transposeName = getNoteName(transposeNote.value);
 
-    const note = NOTE_NAMES[midi % 12];
+    if (transposeName) {
+        const transposeIndex = NOTE_INDEX[transposeName];
+
+        if (transposeIndex !== undefined) {
+
+            // interval from C to the selected transposition
+            const delta = transposeIndex - NOTE_INDEX.C;
+
+            const displayMidi = midi - delta;
+
+            noteIndex = ((displayMidi % 12) + 12) % 12;
+            note = NOTE_NAMES[noteIndex];
+            octave = Math.floor(displayMidi / 12) - 1;
+        }
+    }
+}
 
     return {
-
         note: note + octave,
-
         cents: cents
-
     };
-
 }
 
 function updateDisplay() {
-
     const freq = getFrequency();
     const refA = Number(referenceAInput.value);
-    const nearest = frequencyToNote(freq, refA)
+    const nearest = frequencyToNote(freq, refA);
     const sign = nearest.cents >= 0 ? "+" : "";
 
-    nearestNote.textContent =
-        `${nearest.note} (${sign}${nearest.cents.toFixed(2)}¢)`;  
+    nearestNote.textContent = `${nearest.note} (${sign}${nearest.cents.toFixed(2)}¢)`;
 
-    outputDisplay.textContent = freq.toFixed(2) + " Hz" ;  
+    outputDisplay.textContent = freq.toFixed(2) + " Hz";
 
     if (oscillator) {
-        oscillator.frequency.setValueAtTime(
-            freq,
-            audioContext.currentTime
-        );
+        oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
     }
 }
 
@@ -209,21 +232,24 @@ function updateFromFrequency() {
 }
 
 function parseNote(text) {
+    const match = String(text).trim().match(/^([A-Ga-g])([#b]?)(-?\d+)?$/i);
 
-    const match = text.trim().match(/^([A-Ga-g])([#b]?)(-?\d+)$/);
+    if (!match) return null;
 
-    if (!match)
-        return null;
+    const letter = match[1].toUpperCase();
+    const accidental = (match[2] || "").toLowerCase();
 
     return {
-
-        note: (match[1].toUpperCase() + match[2]),
-
-        octave: Number(match[3])
-
+        note: letter + accidental,
+        octave: match[3] === undefined ? null : Number(match[3])
     };
-
 }
+
+function getNoteName(text) {
+    const parsed = parseNote(text);
+    return parsed ? parsed.note : null;
+}
+
 
 function noteToMidi(noteString) {
 
@@ -364,6 +390,9 @@ fundamentalInput.addEventListener("input", updateFromFrequency);
 
 noteInput.addEventListener("input", updateFromNote);
 
+transposeNote.addEventListener("input", updateDisplay);
+transposeToggleButton.addEventListener("click", toggleTranspose);
+
 referenceAInput.addEventListener("input", updateFromNote);   
 
 multiplierInput.addEventListener("input", updateDisplay);
@@ -383,6 +412,6 @@ setupSpinner(multPlus, multiplierInput, 1);
 setupSpinner(aMinus, referenceAInput, -1, updateFromNote);
 setupSpinner(aPlus, referenceAInput, 1, updateFromNote);
 
-
+updateTransposeToggle();
 updateDisplay();
 

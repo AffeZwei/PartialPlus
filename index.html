@@ -35,14 +35,31 @@
 </div>
 
 <div class="control">
-    <label for="note">OR as Note (C1 = lowest C on piano)</label>
+    <div class="dual-control-row">
+        <div class="dual-control">
+            <label for="note">OR as Note</label>
+            <input
+                id="note"
+                type="text"
+                value="C4"
+                spellcheck="false"
+                autocomplete="off">
+        </div>
 
-    <input
-        id="note"
-        type="text"
-        value="C4"
-        spellcheck="false"
-        autocomplete="off">
+        <div class="dual-control">
+            <label for="transpose">Transpose</label>
+            <div class="transpose-controls">
+                <button id="transposeToggle" type="button">On</button>
+                <input
+                    id="transpose"
+                    type="text"
+                    value="C"
+                    spellcheck="false"
+                    autocomplete="off">
+                
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="control">
